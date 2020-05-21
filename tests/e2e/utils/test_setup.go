@@ -68,6 +68,11 @@ func StartCloudCore() error {
 		Errorf("cloudcore, log:\n %v", string(lbytes))
 		Errorf("cloudcore start error %v", err)
 		os.Exit(1)
+	} else {
+		catcmd := exec.Command("sh", "-c", constants.CatCloudcoreLog)
+		Infof("===========> Executing: %s\n", strings.Join(catcmd.Args, " "))
+		lbytes, _ := catcmd.CombinedOutput()
+		Infof("cloudcore, log:\n %v", string(lbytes))
 	}
 	return nil
 }
@@ -98,6 +103,11 @@ func StartEdgeCore(master, nodeName string) error {
 		Errorf("edgecore log:\n %v", string(bytes))
 		Errorf("edgecore start error %v", err)
 		os.Exit(1)
+	} else {
+		catcmd := exec.Command("sh", "-c", constants.CatEdgecoreLog)
+		Infof("===========> Executing: %s\n", strings.Join(catcmd.Args, " "))
+		bytes, _ := catcmd.CombinedOutput()
+		Infof("edgecore log:\n %v", string(bytes))
 	}
 	return nil
 }

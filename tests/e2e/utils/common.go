@@ -820,21 +820,27 @@ func GetTwin(updateMessage DeviceTwinUpdate, deviceID string) error {
 }
 
 // subscribe function subscribes  the device twin information through the MQTT broker
-func TwinSubscribe(deviceID string) {
+func TwinSubscribe(deviceID string, stop <-chan bool) {
 	getTwinResult := DeviceETPrefix + deviceID + TwinETGetResultSuffix
 	TokenClient = Client.Subscribe(getTwinResult, 0, OnTwinMessageReceived)
 	if TokenClient.Wait() && TokenClient.Error() != nil {
 		Errorf("subscribe() Error in device twin result get  is %v", TokenClient.Error().Error())
 	}
 	for {
-		twin := DeviceTwinUpdate{}
-		err := GetTwin(twin, deviceID)
-		if err != nil {
-			Errorf("Error in getting device twin: %v", err.Error())
-		}
-		time.Sleep(1 * time.Second)
-		if TwinResult.Twin != nil {
-			break
+		select {
+		case <-stop:
+			Infof("Receive stop, exit TwinSubscribe!")
+			return
+		default:
+			twin := DeviceTwinUpdate{}
+			err := GetTwin(twin, deviceID)
+			if err != nil {
+				Errorf("Error in getting device twin: %v", err.Error())
+			}
+			if TwinResult.Twin != nil {
+				Infof("Get Twin %v", TwinResult.Twin)
+			}
+			time.Sleep(1 * time.Second)
 		}
 	}
 }
@@ -859,7 +865,13 @@ func CompareConfigMaps(configMap, expectedConfigMap v1.ConfigMap) bool {
 // CompareTwin is used to compare 2 device Twins
 func CompareTwin(deviceTwin map[string]*MsgTwin, expectedDeviceTwin map[string]*MsgTwin) bool {
 	for key := range expectedDeviceTwin {
+		Infof("DEBUG===>5.deviceTwin[key].Metadata : %v", deviceTwin[key].Metadata)
+		Infof("DEBUG===>5.deviceTwin[key].Expected.Value : %v", deviceTwin[key].Expected.Value)
 		if deviceTwin[key].Metadata != nil && deviceTwin[key].Expected.Value != nil {
+			Infof("DEBUG===>6.*deviceTwin[key].Metadata : %v", *deviceTwin[key].Metadata)
+			Infof("DEBUG===>6.*expectedDeviceTwin[key].Metadata : %v", *expectedDeviceTwin[key].Metadata)
+			Infof("DEBUG===>6.*deviceTwin[key].Expected.Value : %v", *deviceTwin[key].Expected.Value)
+			Infof("DEBUG===>6.*expectedDeviceTwin[key].Expected.Value : %v", *expectedDeviceTwin[key].Expected.Value)
 			if *deviceTwin[key].Metadata != *expectedDeviceTwin[key].Metadata || *deviceTwin[key].Expected.Value != *expectedDeviceTwin[key].Expected.Value {
 				return false
 			}
