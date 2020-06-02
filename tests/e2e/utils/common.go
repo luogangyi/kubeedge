@@ -625,6 +625,8 @@ func HandleDeviceInstance(operation string, apiserver string, nodeSelector strin
 		return false, 0
 	}
 	Infof("%s %s %v in %v", req.Method, req.URL, resp.Status, time.Since(t))
+	contents, _ := ioutil.ReadAll(resp.Body)
+	Infof("LGY DEBUG %v", string(contents))
 	return true, resp.StatusCode
 }
 
@@ -639,6 +641,8 @@ func newDeviceInstanceObject(nodeSelector string, protocolType string, updated b
 			deviceInstance = NewModbusDeviceInstance(nodeSelector)
 		case "led":
 			deviceInstance = NewLedDeviceInstance(nodeSelector)
+		case "customized":
+			deviceInstance = NewCustomizedDeviceInstance(nodeSelector)
 		case "incorrect-instance":
 			deviceInstance = IncorrectDeviceInstance()
 		}
@@ -668,6 +672,8 @@ func newDeviceModelObject(protocolType string, updated bool) *v1alpha1.DeviceMod
 			deviceModel = NewModbusDeviceModel()
 		case "led":
 			deviceModel = NewLedDeviceModel()
+		case "customized":
+			deviceModel = NewCustomizedDeviceModel()
 		case "incorrect-model":
 			deviceModel = IncorrectDeviceModel()
 		}
@@ -695,6 +701,7 @@ func GetDeviceModel(list *v1alpha1.DeviceModelList, getDeviceModelAPI string, ex
 		Fatalf("HTTP Response reading has failed: %v", err)
 		return nil, err
 	}
+	Infof("LGY DEBUG %v", string(contents))
 	err = json.Unmarshal(contents, &list)
 	if err != nil {
 		Fatalf("Unmarshal HTTP Response has failed: %v", err)
@@ -850,6 +857,10 @@ func OnTwinMessageReceived(client MQTT.Client, message MQTT.Message) {
 
 // CompareConfigMaps is used to compare 2 config maps
 func CompareConfigMaps(configMap, expectedConfigMap v1.ConfigMap) bool {
+	m1, _ := json.Marshal(configMap)
+	m2, _ := json.Marshal(expectedConfigMap)
+	Infof("LGY DEBUG:configMap= %v", string(m1))
+	Infof("LGY DEBUG:expectedConfigMap= %v", string(m2))
 	if !reflect.DeepEqual(expectedConfigMap.TypeMeta, configMap.TypeMeta) || expectedConfigMap.ObjectMeta.Namespace != configMap.ObjectMeta.Namespace || !reflect.DeepEqual(expectedConfigMap.Data, configMap.Data) {
 		return false
 	}
