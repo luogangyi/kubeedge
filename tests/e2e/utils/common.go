@@ -861,7 +861,31 @@ func CompareConfigMaps(configMap, expectedConfigMap v1.ConfigMap) bool {
 	m2, _ := json.Marshal(expectedConfigMap)
 	Infof("LGY DEBUG:configMap= %v", string(m1))
 	Infof("LGY DEBUG:expectedConfigMap= %v", string(m2))
+	if !reflect.DeepEqual(expectedConfigMap.TypeMeta, configMap.TypeMeta) {
+		Infof("LGY DEBUG:111")
+	}
+	if expectedConfigMap.ObjectMeta.Namespace != configMap.ObjectMeta.Namespace {
+		Infof("LGY DEBUG:222")
+	}
+	if !reflect.DeepEqual(expectedConfigMap.Data, configMap.Data) {
+		Infof("LGY DEBUG:333")
+	}
+
 	if !reflect.DeepEqual(expectedConfigMap.TypeMeta, configMap.TypeMeta) || expectedConfigMap.ObjectMeta.Namespace != configMap.ObjectMeta.Namespace || !reflect.DeepEqual(expectedConfigMap.Data, configMap.Data) {
+		return false
+	}
+	return true
+}
+
+// CompareConfigMaps is used to compare 2 device profile in config maps
+func CompareDeviceProfileInConfigMaps(configMap, expectedConfigMap v1.ConfigMap) bool {
+	deviceProfile := configMap.Data["deviceProfile.json"]
+	ExpectedDeviceProfile := expectedConfigMap.Data["deviceProfile.json"]
+	var deviceProfileMap, expectedDeviceProfileMap map[string]interface{}
+	json.Unmarshal([]byte(deviceProfile), &deviceProfileMap)
+	json.Unmarshal([]byte(ExpectedDeviceProfile), &expectedDeviceProfileMap)
+	if !reflect.DeepEqual(expectedConfigMap.TypeMeta, configMap.TypeMeta) {
+		Infof("LGY DEBUG:444")
 		return false
 	}
 	return true
