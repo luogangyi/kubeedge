@@ -749,6 +749,10 @@ func GetDevice(list *v1alpha1.DeviceList, getDeviceAPI string, expectedDevice *v
 					expectedDevice.ObjectMeta.Namespace != device.ObjectMeta.Namespace ||
 					!reflect.DeepEqual(expectedDevice.ObjectMeta.Labels, device.ObjectMeta.Labels) ||
 					!reflect.DeepEqual(expectedDevice.Spec, device.Spec) {
+					m1, _ := json.Marshal(device.Spec)
+					m2, _ := json.Marshal(expectedDevice.Spec)
+					Infof("LGY DEBUG:device.Spec= %v", string(m1))
+					Infof("LGY DEBUG:expectedDevice.Spec= %v", string(m2))
 					return nil, errors.New("The device is not matching with what was expected")
 				}
 				twinExists := false
