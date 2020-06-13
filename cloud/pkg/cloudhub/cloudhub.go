@@ -17,7 +17,7 @@ import (
 	"github.com/kubeedge/kubeedge/cloud/pkg/cloudhub/servers"
 	"github.com/kubeedge/kubeedge/cloud/pkg/cloudhub/servers/httpserver"
 	"github.com/kubeedge/kubeedge/cloud/pkg/cloudhub/servers/udsserver"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha2"
 )
 
 var DoneTLSTunnelCerts = make(chan bool, 1)
@@ -32,7 +32,7 @@ func newCloudHub(enable bool) *cloudHub {
 	}
 }
 
-func Register(hub *v1alpha1.CloudHub, kubeAPIConfig *v1alpha1.KubeAPIConfig) {
+func Register(hub *v1alpha2.CloudHub, kubeAPIConfig *v1alpha2.KubeAPIConfig) {
 	hubconfig.InitConfigure(hub, kubeAPIConfig)
 	core.Register(newCloudHub(hub.Enable))
 }
@@ -102,8 +102,8 @@ func newObjectSyncController() *hubconfig.ObjectSyncController {
 	crdClient := versioned.NewForConfigOrDie(config)
 	crdFactory := crdinformerfactory.NewSharedInformerFactory(crdClient, 0)
 
-	clusterObjectSyncInformer := crdFactory.Reliablesyncs().V1alpha1().ClusterObjectSyncs()
-	objectSyncInformer := crdFactory.Reliablesyncs().V1alpha1().ObjectSyncs()
+	clusterObjectSyncInformer := crdFactory.Reliablesyncs().V1alpha2().ClusterObjectSyncs()
+	objectSyncInformer := crdFactory.Reliablesyncs().V1alpha2().ObjectSyncs()
 
 	sc := &hubconfig.ObjectSyncController{
 		CrdClient: crdClient,

@@ -92,11 +92,11 @@ We recommend referring to the kubernetes component config api design to redesign
 
 #### meta config apis
 
-defined in `pkg/apis/meta/v1alpha1/types.go`
+defined in `pkg/apis/meta/v1alpha2/types.go`
 
 ```go
 
-package v1alpha1
+package v1alpha2
 
 type ModuleName string
 type GroupName string
@@ -138,16 +138,16 @@ const (
 
 #### cloudcore config apis
 
-defined in `pkg/apis/cloudcore/v1alpha1/types.go`
+defined in `pkg/apis/cloudcore/v1alpha2/types.go`
 
 ```go
 
-package v1alpha1
+package v1alpha2
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	metaconfig "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/meta/v1alpha1"
+	metaconfig "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/meta/v1alpha2"
 )
 
 // CloudCoreConfig indicates the config of cloudcore which get from cloudcore config file
@@ -436,14 +436,14 @@ type DeviceControllerLoad struct {
 
 #### edgecore config apis
 
-defined in `pkg/apis/edgecore/v1alpha1/types.go`
+defined in `pkg/apis/edgecore/v1alpha2/types.go`
 
 ```go
 
-package v1alpha1
+package v1alpha2
 
 import (
-	metaconfig "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/meta/v1alpha1"
+	metaconfig "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/meta/v1alpha2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -759,17 +759,17 @@ type EdgeMesh struct {
 
 #### edgesite config apis
 
-defined in `pkg/apis/edgesite/v1alpha1/types.go`
+defined in `pkg/apis/edgesite/v1alpha2/types.go`
 
 ```go
 
-package v1alpha1
+package v1alpha2
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	cloudcoreconfig "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha1"
-	edgecoreconfig "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha1"
+	cloudcoreconfig "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha2"
+	edgecoreconfig "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha2"
 )
 
 const (
@@ -840,7 +840,7 @@ default load `/etc/kubeedge/config/edgesite.yaml` configfile
 
 ```yaml
 
-apiVersion: cloudcore.config.kubeedge.io/v1alpha1
+apiVersion: cloudcore.config.kubeedge.io/v1alpha2
 kind: CloudCore
 kubeAPIConfig:
   burst: 200
@@ -925,7 +925,7 @@ modules:
 
 ```yaml
 
-apiVersion: cloudcore.config.kubeedge.io/v1alpha1
+apiVersion: cloudcore.config.kubeedge.io/v1alpha2
 kind: CloudCore
 kubeAPIConfig:
   kubeConfig: /root/.kube/config
@@ -954,7 +954,7 @@ modules:
 
 ```yaml
 
-apiVersion: edgecore.config.kubeedge.io/v1alpha1
+apiVersion: edgecore.config.kubeedge.io/v1alpha2
 database:
   aliasName: default
   dataSource: /var/lib/kubeedge/edgecore.db
@@ -1032,7 +1032,7 @@ modules:
 
 ```yaml
 
-apiVersion: edgecore.config.kubeedge.io/v1alpha1
+apiVersion: edgecore.config.kubeedge.io/v1alpha2
 database:
   dataSource: /var/lib/kubeedge/edgecore.db
 kind: EdgeCore
@@ -1080,7 +1080,7 @@ modules:
 
 ```yaml
 
-apiVersion: edgesite.config.kubeedge.io/v1alpha1
+apiVersion: edgesite.config.kubeedge.io/v1alpha2
 database:
   aliasName: default
   dataSource: /var/lib/kubeedge/edgesite.db
@@ -1165,7 +1165,7 @@ modules:
 
 ```yaml
 
-apiVersion: edgesite.config.kubeedge.io/v1alpha1
+apiVersion: edgesite.config.kubeedge.io/v1alpha2
 database:
   dataSource: /var/lib/kubeedge/edgesite.db
 kind: EdgeSite
@@ -1225,19 +1225,19 @@ Just like kubernetes component config, KubeEdge component config need `apiVersio
 * cloudcore
 
 ```yaml
-apiVersion: cloudcore.config.kubeedge.io/v1alpha1
+apiVersion: cloudcore.config.kubeedge.io/v1alpha2
 ```
 
 * edgecore
 
 ```yaml
-apiVersion: edgecore.config.kubeedge.io/v1alpha1
+apiVersion: edgecore.config.kubeedge.io/v1alpha2
 ```
 
 * edgsite
 
 ```yaml
-apiVersion: edgesite.config.kubeedge.io/v1alpha1
+apiVersion: edgesite.config.kubeedge.io/v1alpha2
 ```
 
 ### How to pass the configuration to each module

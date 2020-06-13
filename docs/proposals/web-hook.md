@@ -75,7 +75,7 @@ Webhooks: []admissionregistrationv1beta1.ValidatingWebhook{
 			},
 			Rule: admissionregistrationv1beta1.Rule{
 				APIGroups:   []string{"devices.kubeedge.io"},
-				APIVersions: []string{"v1alpha1"},
+				APIVersions: []string{"v1alpha2"},
 				Resources:   []string{"devicemodels"},
 			},
 		}},

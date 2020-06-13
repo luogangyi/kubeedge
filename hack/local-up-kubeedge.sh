@@ -66,14 +66,14 @@ fi
 
 function create_device_crd {
   echo "creating the device crd..."
-  kubectl apply -f ${KUBEEDGE_ROOT}/build/crds/devices/devices_v1alpha1_device.yaml
-  kubectl apply -f ${KUBEEDGE_ROOT}/build/crds/devices/devices_v1alpha1_devicemodel.yaml
+  kubectl apply -f ${KUBEEDGE_ROOT}/build/crds/devices/devices_v1alpha2_device.yaml
+  kubectl apply -f ${KUBEEDGE_ROOT}/build/crds/devices/devices_v1alpha2_devicemodel.yaml
 }
 
 function create_objectsync_crd {
   echo "creating the objectsync crd..."
-  kubectl apply -f ${KUBEEDGE_ROOT}/build/crds/reliablesyncs/cluster_objectsync_v1alpha1.yaml
-  kubectl apply -f ${KUBEEDGE_ROOT}/build/crds/reliablesyncs/objectsync_v1alpha1.yaml
+  kubectl apply -f ${KUBEEDGE_ROOT}/build/crds/reliablesyncs/cluster_objectsync_v1alpha2.yaml
+  kubectl apply -f ${KUBEEDGE_ROOT}/build/crds/reliablesyncs/objectsync_v1alpha2.yaml
 }
 
 function build_cloudcore {

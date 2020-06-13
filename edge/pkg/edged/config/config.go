@@ -3,7 +3,7 @@ package config
 import (
 	"sync"
 
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha2"
 )
 
 const (
@@ -30,10 +30,10 @@ var Config Configure
 var once sync.Once
 
 type Configure struct {
-	v1alpha1.Edged
+	v1alpha2.Edged
 }
 
-func InitConfigure(e *v1alpha1.Edged) {
+func InitConfigure(e *v1alpha2.Edged) {
 	once.Do(func() {
 		Config = Configure{
 			Edged: *e,

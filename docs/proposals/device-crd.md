@@ -88,7 +88,7 @@ The tables below summarize the group, kind and API version details for the CRDs.
 | Field                 | Description             |
 |-----------------------|-------------------------|
 |Group                  | devices.kubeedge.io     |
-|APIVersion             | v1alpha1                |
+|APIVersion             | v1alpha2                |
 |Kind                   | DeviceModel             |
 
 * DeviceInstance
@@ -96,7 +96,7 @@ The tables below summarize the group, kind and API version details for the CRDs.
 | Field                 | Description             |
 |-----------------------|-------------------------|
 |Group                  | devices.kubeedge.io     |
-|APIVersion             | v1alpha1                |
+|APIVersion             | v1alpha2                |
 |Kind                   | Device                  |
 
 ### Device model CRD
@@ -306,7 +306,7 @@ type DeviceModelList struct {
 
 ### Device model sample
 ```yaml
-apiVersion: devices.kubeedge.io/v1alpha1
+apiVersion: devices.kubeedge.io/v1alpha2
 kind: DeviceModel
 metadata:
   labels:
@@ -526,7 +526,7 @@ type DeviceList struct {
 
 ### Device instance sample
 ```yaml
-apiVersion: devices.kubeedge.io/v1alpha1
+apiVersion: devices.kubeedge.io/v1alpha2
 kind: Device
 metadata:
   name: sensor-tag01

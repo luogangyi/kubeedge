@@ -109,7 +109,7 @@ import (
 	csiplugin "github.com/kubeedge/kubeedge/edge/pkg/edged/volume/csi"
 	"github.com/kubeedge/kubeedge/edge/pkg/metamanager"
 	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/client"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha2"
 	"github.com/kubeedge/kubeedge/pkg/version"
 )
 
@@ -246,7 +246,7 @@ type edged struct {
 }
 
 // Register register edged
-func Register(e *v1alpha1.Edged) {
+func Register(e *v1alpha2.Edged) {
 	edgedconfig.InitConfigure(e)
 	edged, err := newEdged(e.Enable)
 	if err != nil {

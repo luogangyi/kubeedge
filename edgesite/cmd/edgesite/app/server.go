@@ -15,8 +15,8 @@ import (
 	"github.com/kubeedge/kubeedge/edge/pkg/edged"
 	"github.com/kubeedge/kubeedge/edge/pkg/metamanager"
 	"github.com/kubeedge/kubeedge/edgesite/cmd/edgesite/app/options"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgesite/v1alpha1"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgesite/v1alpha1/validation"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgesite/v1alpha2"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgesite/v1alpha2/validation"
 	"github.com/kubeedge/kubeedge/pkg/util"
 	"github.com/kubeedge/kubeedge/pkg/util/flag"
 	"github.com/kubeedge/kubeedge/pkg/version"
@@ -34,8 +34,8 @@ It is also responsible for storing/retrieving metadata to/from a lightweight dat
 runs on edge nodes and manages containerized applications.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			verflag.PrintAndExitIfRequested()
-			flag.PrintMinConfigAndExitIfRequested(v1alpha1.NewMinEdgeSiteConfig())
-			flag.PrintDefaultConfigAndExitIfRequested(v1alpha1.NewDefaultEdgeSiteConfig())
+			flag.PrintMinConfigAndExitIfRequested(v1alpha2.NewMinEdgeSiteConfig())
+			flag.PrintDefaultConfigAndExitIfRequested(v1alpha2.NewDefaultEdgeSiteConfig())
 			flag.PrintFlags(cmd.Flags())
 
 			if errs := opts.Validate(); len(errs) > 0 {
@@ -83,7 +83,7 @@ runs on edge nodes and manages containerized applications.`,
 }
 
 // registerModules register all the modules started in edgesite
-func registerModules(c *v1alpha1.EdgeSiteConfig) {
+func registerModules(c *v1alpha2.EdgeSiteConfig) {
 	edged.Register(c.Modules.Edged)
 	edgecontroller.Register(c.Modules.EdgeController, c.KubeAPIConfig, c.Modules.Edged.HostnameOverride, true)
 	metamanager.Register(c.Modules.MetaManager)

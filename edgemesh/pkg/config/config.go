@@ -7,20 +7,20 @@ import (
 	"k8s.io/klog"
 
 	"github.com/kubeedge/kubeedge/edgemesh/pkg/common"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha2"
 )
 
 var Config Configure
 var once sync.Once
 
 type Configure struct {
-	v1alpha1.EdgeMesh
+	v1alpha2.EdgeMesh
 	// for edgemesh listener
 	ListenIP net.IP
 	Listener *net.TCPListener
 }
 
-func InitConfigure(e *v1alpha1.EdgeMesh) {
+func InitConfigure(e *v1alpha2.EdgeMesh) {
 	once.Do(func() {
 		Config = Configure{
 			EdgeMesh: *e,

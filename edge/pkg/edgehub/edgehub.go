@@ -13,7 +13,7 @@ import (
 	"github.com/kubeedge/kubeedge/edge/pkg/common/modules"
 	"github.com/kubeedge/kubeedge/edge/pkg/edgehub/clients"
 	"github.com/kubeedge/kubeedge/edge/pkg/edgehub/config"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha2"
 	"github.com/kubeedge/kubeedge/pkg/util/validation"
 )
 
@@ -42,7 +42,7 @@ func newEdgeHub(enable bool) *EdgeHub {
 }
 
 // Register register edgehub
-func Register(eh *v1alpha1.EdgeHub, nodeName string) {
+func Register(eh *v1alpha2.EdgeHub, nodeName string) {
 	config.InitConfigure(eh, nodeName)
 	core.Register(newEdgeHub(eh.Enable))
 }

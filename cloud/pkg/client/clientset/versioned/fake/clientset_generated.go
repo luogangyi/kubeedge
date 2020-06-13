@@ -19,10 +19,10 @@ package fake
 
 import (
 	clientset "github.com/kubeedge/kubeedge/cloud/pkg/client/clientset/versioned"
-	devicesv1alpha1 "github.com/kubeedge/kubeedge/cloud/pkg/client/clientset/versioned/typed/devices/v1alpha1"
-	fakedevicesv1alpha1 "github.com/kubeedge/kubeedge/cloud/pkg/client/clientset/versioned/typed/devices/v1alpha1/fake"
-	reliablesyncsv1alpha1 "github.com/kubeedge/kubeedge/cloud/pkg/client/clientset/versioned/typed/reliablesyncs/v1alpha1"
-	fakereliablesyncsv1alpha1 "github.com/kubeedge/kubeedge/cloud/pkg/client/clientset/versioned/typed/reliablesyncs/v1alpha1/fake"
+	devicesv1alpha2 "github.com/kubeedge/kubeedge/cloud/pkg/client/clientset/versioned/typed/devices/v1alpha2"
+	fakedevicesv1alpha2 "github.com/kubeedge/kubeedge/cloud/pkg/client/clientset/versioned/typed/devices/v1alpha2/fake"
+	reliablesyncsv1alpha2 "github.com/kubeedge/kubeedge/cloud/pkg/client/clientset/versioned/typed/reliablesyncs/v1alpha2"
+	fakereliablesyncsv1alpha2 "github.com/kubeedge/kubeedge/cloud/pkg/client/clientset/versioned/typed/reliablesyncs/v1alpha2/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"
@@ -77,12 +77,12 @@ func (c *Clientset) Tracker() testing.ObjectTracker {
 
 var _ clientset.Interface = &Clientset{}
 
-// DevicesV1alpha1 retrieves the DevicesV1alpha1Client
-func (c *Clientset) DevicesV1alpha1() devicesv1alpha1.DevicesV1alpha1Interface {
-	return &fakedevicesv1alpha1.FakeDevicesV1alpha1{Fake: &c.Fake}
+// DevicesV1alpha2 retrieves the DevicesV1alpha2Client
+func (c *Clientset) DevicesV1alpha2() devicesv1alpha2.DevicesV1alpha2Interface {
+	return &fakedevicesv1alpha2.FakeDevicesV1alpha2{Fake: &c.Fake}
 }
 
-// ReliablesyncsV1alpha1 retrieves the ReliablesyncsV1alpha1Client
-func (c *Clientset) ReliablesyncsV1alpha1() reliablesyncsv1alpha1.ReliablesyncsV1alpha1Interface {
-	return &fakereliablesyncsv1alpha1.FakeReliablesyncsV1alpha1{Fake: &c.Fake}
+// ReliablesyncsV1alpha2 retrieves the ReliablesyncsV1alpha2Client
+func (c *Clientset) ReliablesyncsV1alpha2() reliablesyncsv1alpha2.ReliablesyncsV1alpha2Interface {
+	return &fakereliablesyncsv1alpha2.FakeReliablesyncsV1alpha2{Fake: &c.Fake}
 }

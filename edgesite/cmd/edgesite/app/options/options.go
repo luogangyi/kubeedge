@@ -24,7 +24,7 @@ import (
 	cliflag "k8s.io/component-base/cli/flag"
 
 	"github.com/kubeedge/kubeedge/common/constants"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgesite/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgesite/v1alpha2"
 	"github.com/kubeedge/kubeedge/pkg/util/validation"
 )
 
@@ -53,8 +53,8 @@ func (o *EdgeSiteOptions) Validate() []error {
 	return errs
 }
 
-func (o *EdgeSiteOptions) Config() (*v1alpha1.EdgeSiteConfig, error) {
-	cfg := v1alpha1.NewDefaultEdgeSiteConfig()
+func (o *EdgeSiteOptions) Config() (*v1alpha2.EdgeSiteConfig, error) {
+	cfg := v1alpha2.NewDefaultEdgeSiteConfig()
 	if err := cfg.Parse(o.ConfigFile); err != nil {
 		return nil, err
 	}
