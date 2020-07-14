@@ -24,7 +24,7 @@ import (
 	"github.com/google/uuid"
 
 	types "github.com/kubeedge/kubeedge/keadm/cmd/keadm/app/cmd/common"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha2"
 )
 
 // KubeEdgeInstTool embedes Common struct and contains cloud node ip:port information
@@ -81,7 +81,7 @@ func (ku *KubeEdgeInstTool) createEdgeConfigFiles() error {
 			return fmt.Errorf("not able to create %s folder path", KubeEdgeNewConfigDir)
 		}
 
-		edgeCoreConfig := v1alpha1.NewDefaultEdgeCoreConfig()
+		edgeCoreConfig := v1alpha2.NewDefaultEdgeCoreConfig()
 		edgeCoreConfig.Modules.EdgeHub.WebSocket.Server = ku.CloudCoreIP
 
 		if ku.EdgeNodeName != "" {

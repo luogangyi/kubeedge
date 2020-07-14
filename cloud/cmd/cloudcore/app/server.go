@@ -19,8 +19,8 @@ import (
 	"github.com/kubeedge/kubeedge/cloud/pkg/edgecontroller"
 	kele "github.com/kubeedge/kubeedge/cloud/pkg/leaderelection"
 	"github.com/kubeedge/kubeedge/cloud/pkg/synccontroller"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha1"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha1/validation"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha2"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha2/validation"
 	"github.com/kubeedge/kubeedge/pkg/util"
 	"github.com/kubeedge/kubeedge/pkg/util/flag"
 	"github.com/kubeedge/kubeedge/pkg/version"
@@ -38,8 +38,8 @@ edge nodes and pods metadata so that the data can be targeted to a specific edge
 kubernetes controller which manages devices so that the device metadata/status date can be synced between edge and cloud.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			verflag.PrintAndExitIfRequested()
-			flag.PrintMinConfigAndExitIfRequested(v1alpha1.NewMinCloudCoreConfig())
-			flag.PrintDefaultConfigAndExitIfRequested(v1alpha1.NewDefaultCloudCoreConfig())
+			flag.PrintMinConfigAndExitIfRequested(v1alpha2.NewMinCloudCoreConfig())
+			flag.PrintDefaultConfigAndExitIfRequested(v1alpha2.NewDefaultCloudCoreConfig())
 			flag.PrintFlags(cmd.Flags())
 
 			if errs := opts.Validate(); len(errs) > 0 {
@@ -97,7 +97,7 @@ kubernetes controller which manages devices so that the device metadata/status d
 }
 
 // registerModules register all the modules started in cloudcore
-func registerModules(c *v1alpha1.CloudCoreConfig) {
+func registerModules(c *v1alpha2.CloudCoreConfig) {
 	cloudhub.Register(c.Modules.CloudHub, c.KubeAPIConfig)
 	edgecontroller.Register(c.Modules.EdgeController, c.KubeAPIConfig, "", false)
 	devicecontroller.Register(c.Modules.DeviceController, c.KubeAPIConfig)

@@ -15,7 +15,7 @@ import (
 	"github.com/kubeedge/beehive/pkg/core/model"
 	"github.com/kubeedge/kubeedge/edge/pkg/common/modules"
 	"github.com/kubeedge/kubeedge/edge/pkg/servicebus/util"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha2"
 )
 
 const (
@@ -35,7 +35,7 @@ func newServicebus(enable bool) *servicebus {
 }
 
 // Register register servicebus
-func Register(s *v1alpha1.ServiceBus) {
+func Register(s *v1alpha2.ServiceBus) {
 	core.Register(newServicebus(s.Enable))
 }
 

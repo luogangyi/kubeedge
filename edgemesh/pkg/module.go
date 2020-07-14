@@ -12,7 +12,7 @@ import (
 	"github.com/kubeedge/kubeedge/edgemesh/pkg/listener"
 	"github.com/kubeedge/kubeedge/edgemesh/pkg/plugin"
 	"github.com/kubeedge/kubeedge/edgemesh/pkg/proxy"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha2"
 )
 
 //EdgeMesh defines EdgeMesh object structure
@@ -21,7 +21,7 @@ type EdgeMesh struct {
 }
 
 // Register register edgemesh
-func Register(m *v1alpha1.EdgeMesh) {
+func Register(m *v1alpha2.EdgeMesh) {
 	meshconfig.InitConfigure(m)
 	core.Register(&EdgeMesh{enable: m.Enable})
 }

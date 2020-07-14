@@ -12,13 +12,13 @@ import (
 
 	beehiveContext "github.com/kubeedge/beehive/pkg/core/context"
 	"github.com/kubeedge/beehive/pkg/core/model"
-	"github.com/kubeedge/kubeedge/cloud/pkg/apis/reliablesyncs/v1alpha1"
+	"github.com/kubeedge/kubeedge/cloud/pkg/apis/reliablesyncs/v1alpha2"
 	edgectrconst "github.com/kubeedge/kubeedge/cloud/pkg/edgecontroller/constants"
 	edgectrmessagelayer "github.com/kubeedge/kubeedge/cloud/pkg/edgecontroller/messagelayer"
 	commonconst "github.com/kubeedge/kubeedge/common/constants"
 )
 
-func (sctl *SyncController) managePod(sync *v1alpha1.ObjectSync) {
+func (sctl *SyncController) managePod(sync *v1alpha2.ObjectSync) {
 	pod, err := sctl.podLister.Pods(sync.Namespace).Get(sync.Spec.ObjectName)
 
 	nodeName := getNodeName(sync.Name)
@@ -40,7 +40,7 @@ func (sctl *SyncController) managePod(sync *v1alpha1.ObjectSync) {
 	sendEvents(err, nodeName, sync, model.ResourceTypePod, pod.ResourceVersion, pod)
 }
 
-func (sctl *SyncController) manageConfigMap(sync *v1alpha1.ObjectSync) {
+func (sctl *SyncController) manageConfigMap(sync *v1alpha2.ObjectSync) {
 	configmap, err := sctl.configMapLister.ConfigMaps(sync.Namespace).Get(sync.Spec.ObjectName)
 
 	nodeName := getNodeName(sync.Name)
@@ -62,7 +62,7 @@ func (sctl *SyncController) manageConfigMap(sync *v1alpha1.ObjectSync) {
 	sendEvents(err, nodeName, sync, model.ResourceTypeConfigmap, configmap.ResourceVersion, configmap)
 }
 
-func (sctl *SyncController) manageSecret(sync *v1alpha1.ObjectSync) {
+func (sctl *SyncController) manageSecret(sync *v1alpha2.ObjectSync) {
 	secret, err := sctl.secretLister.Secrets(sync.Namespace).Get(sync.Spec.ObjectName)
 
 	nodeName := getNodeName(sync.Name)
@@ -84,7 +84,7 @@ func (sctl *SyncController) manageSecret(sync *v1alpha1.ObjectSync) {
 	sendEvents(err, nodeName, sync, model.ResourceTypeSecret, secret.ResourceVersion, secret)
 }
 
-func (sctl *SyncController) manageService(sync *v1alpha1.ObjectSync) {
+func (sctl *SyncController) manageService(sync *v1alpha2.ObjectSync) {
 	service, err := sctl.serviceLister.Services(sync.Namespace).Get(sync.Spec.ObjectName)
 
 	nodeName := getNodeName(sync.Name)
@@ -106,7 +106,7 @@ func (sctl *SyncController) manageService(sync *v1alpha1.ObjectSync) {
 	sendEvents(err, nodeName, sync, commonconst.ResourceTypeService, service.ResourceVersion, service)
 }
 
-func (sctl *SyncController) manageEndpoint(sync *v1alpha1.ObjectSync) {
+func (sctl *SyncController) manageEndpoint(sync *v1alpha2.ObjectSync) {
 	endpoint, err := sctl.endpointLister.Endpoints(sync.Namespace).Get(sync.Spec.ObjectName)
 
 	nodeName := getNodeName(sync.Name)
@@ -129,7 +129,7 @@ func (sctl *SyncController) manageEndpoint(sync *v1alpha1.ObjectSync) {
 }
 
 // todo: add events for devices
-func (sctl *SyncController) manageDevice(sync *v1alpha1.ObjectSync) {
+func (sctl *SyncController) manageDevice(sync *v1alpha2.ObjectSync) {
 	//pod, err := sctl.deviceLister.Devices(sync.Namespace).Get(sync.Spec.ObjectName)
 
 	//
@@ -142,7 +142,7 @@ func (sctl *SyncController) manageDevice(sync *v1alpha1.ObjectSync) {
 	//}
 }
 
-func sendEvents(err error, nodeName string, sync *v1alpha1.ObjectSync, resourceType string,
+func sendEvents(err error, nodeName string, sync *v1alpha2.ObjectSync, resourceType string,
 	objectResourceVersion string, obj interface{}) {
 	if err != nil && apierrors.IsNotFound(err) {
 		//trigger the delete event

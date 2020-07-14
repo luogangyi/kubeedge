@@ -22,16 +22,16 @@ import (
 	"github.com/kubeedge/beehive/pkg/core"
 	beehiveContext "github.com/kubeedge/beehive/pkg/core/context"
 	"github.com/kubeedge/beehive/pkg/core/model"
-	"github.com/kubeedge/kubeedge/cloud/pkg/apis/reliablesyncs/v1alpha1"
+	"github.com/kubeedge/kubeedge/cloud/pkg/apis/reliablesyncs/v1alpha2"
 	"github.com/kubeedge/kubeedge/cloud/pkg/client/clientset/versioned"
 	crdinformerfactory "github.com/kubeedge/kubeedge/cloud/pkg/client/informers/externalversions"
-	deviceinformer "github.com/kubeedge/kubeedge/cloud/pkg/client/informers/externalversions/devices/v1alpha1"
-	syncinformer "github.com/kubeedge/kubeedge/cloud/pkg/client/informers/externalversions/reliablesyncs/v1alpha1"
-	devicelister "github.com/kubeedge/kubeedge/cloud/pkg/client/listers/devices/v1alpha1"
-	synclister "github.com/kubeedge/kubeedge/cloud/pkg/client/listers/reliablesyncs/v1alpha1"
+	deviceinformer "github.com/kubeedge/kubeedge/cloud/pkg/client/informers/externalversions/devices/v1alpha2"
+	syncinformer "github.com/kubeedge/kubeedge/cloud/pkg/client/informers/externalversions/reliablesyncs/v1alpha2"
+	devicelister "github.com/kubeedge/kubeedge/cloud/pkg/client/listers/devices/v1alpha2"
+	synclister "github.com/kubeedge/kubeedge/cloud/pkg/client/listers/reliablesyncs/v1alpha2"
 	"github.com/kubeedge/kubeedge/cloud/pkg/synccontroller/config"
 	commonconst "github.com/kubeedge/kubeedge/common/constants"
-	configv1alpha1 "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha1"
+	configv1alpha2 "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha2"
 )
 
 // SyncController use beehive context message layer
@@ -93,9 +93,9 @@ func newSyncController(enable bool) *SyncController {
 	serviceInformer := kubeSharedInformers.Core().V1().Services()
 	endpointInformer := kubeSharedInformers.Core().V1().Endpoints()
 	nodeInformer := kubeSharedInformers.Core().V1().Nodes()
-	deviceInformer := crdFactory.Devices().V1alpha1().Devices()
-	clusterObjectSyncInformer := crdFactory.Reliablesyncs().V1alpha1().ClusterObjectSyncs()
-	objectSyncInformer := crdFactory.Reliablesyncs().V1alpha1().ObjectSyncs()
+	deviceInformer := crdFactory.Devices().V1alpha2().Devices()
+	clusterObjectSyncInformer := crdFactory.Reliablesyncs().V1alpha2().ClusterObjectSyncs()
+	objectSyncInformer := crdFactory.Reliablesyncs().V1alpha2().ObjectSyncs()
 
 	sctl := &SyncController{
 		enable: enable,
@@ -141,7 +141,7 @@ func newSyncController(enable bool) *SyncController {
 	return sctl
 }
 
-func Register(ec *configv1alpha1.SyncController, kubeAPIConfig *configv1alpha1.KubeAPIConfig) {
+func Register(ec *configv1alpha2.SyncController, kubeAPIConfig *configv1alpha2.KubeAPIConfig) {
 	config.InitConfigure(ec, kubeAPIConfig)
 	core.Register(newSyncController(ec.Enable))
 }
@@ -212,13 +212,13 @@ func (sctl *SyncController) reconcile() {
 
 // Compare the cluster scope objects that have been persisted to the edge with the cluster scope objects in K8s,
 // and generate update and delete events to the edge
-func (sctl *SyncController) manageClusterObjectSync(syncs []*v1alpha1.ClusterObjectSync) {
+func (sctl *SyncController) manageClusterObjectSync(syncs []*v1alpha2.ClusterObjectSync) {
 	// TODO: Handle cluster scope resource
 }
 
 // Compare the namespace scope objects that have been persisted to the edge with the namespace scope objects in K8s,
 // and generate update and delete events to the edge
-func (sctl *SyncController) manageObjectSync(syncs []*v1alpha1.ObjectSync) {
+func (sctl *SyncController) manageObjectSync(syncs []*v1alpha2.ObjectSync) {
 	for _, sync := range syncs {
 		switch sync.Spec.ObjectKind {
 		case model.ResourceTypePod:
@@ -251,7 +251,7 @@ func (sctl *SyncController) deleteObjectSyncs() {
 		}
 		if isGarbage {
 			klog.Infof("ObjectSync %s will be deleted since node %s has been deleted", sync.Name, nodeName)
-			err = sctl.crdClient.ReliablesyncsV1alpha1().ObjectSyncs(sync.Namespace).Delete(sync.Name, metav1.NewDeleteOptions(0))
+			err = sctl.crdClient.ReliablesyncsV1alpha2().ObjectSyncs(sync.Namespace).Delete(sync.Name, metav1.NewDeleteOptions(0))
 			if err != nil {
 				klog.Errorf("failed to delete objectSync %s for edgenode %s, err: %v", sync.Name, nodeName, err)
 			}
@@ -260,7 +260,7 @@ func (sctl *SyncController) deleteObjectSyncs() {
 }
 
 // checkObjectSync checks whether objectSync is outdated
-func (sctl *SyncController) checkObjectSync(sync *v1alpha1.ObjectSync) (bool, error) {
+func (sctl *SyncController) checkObjectSync(sync *v1alpha2.ObjectSync) (bool, error) {
 	nodeName := getNodeName(sync.Name)
 	_, err := sctl.nodeLister.Get(nodeName)
 	if errors.IsNotFound(err) {

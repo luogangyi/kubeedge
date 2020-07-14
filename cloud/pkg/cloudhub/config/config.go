@@ -9,18 +9,18 @@ import (
 	"k8s.io/klog"
 
 	"github.com/kubeedge/kubeedge/cloud/pkg/client/clientset/versioned"
-	syncinformer "github.com/kubeedge/kubeedge/cloud/pkg/client/informers/externalversions/reliablesyncs/v1alpha1"
-	synclister "github.com/kubeedge/kubeedge/cloud/pkg/client/listers/reliablesyncs/v1alpha1"
+	syncinformer "github.com/kubeedge/kubeedge/cloud/pkg/client/informers/externalversions/reliablesyncs/v1alpha2"
+	synclister "github.com/kubeedge/kubeedge/cloud/pkg/client/listers/reliablesyncs/v1alpha2"
 	kele "github.com/kubeedge/kubeedge/cloud/pkg/leaderelection"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha2"
 )
 
 var Config Configure
 var once sync.Once
 
 type Configure struct {
-	v1alpha1.CloudHub
-	KubeAPIConfig *v1alpha1.KubeAPIConfig
+	v1alpha2.CloudHub
+	KubeAPIConfig *v1alpha2.KubeAPIConfig
 	Ca            []byte
 	CaKey         []byte
 	Cert          []byte
@@ -28,7 +28,7 @@ type Configure struct {
 	Checker       *kele.ReadyzAdaptor
 }
 
-func InitConfigure(hub *v1alpha1.CloudHub, kubeAPIConfig *v1alpha1.KubeAPIConfig) {
+func InitConfigure(hub *v1alpha2.CloudHub, kubeAPIConfig *v1alpha2.KubeAPIConfig) {
 	once.Do(func() {
 		if len(hub.AdvertiseAddress) == 0 {
 			klog.Fatal("AdvertiseAddress must be specified!")

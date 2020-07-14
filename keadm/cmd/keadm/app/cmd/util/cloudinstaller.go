@@ -9,7 +9,7 @@ import (
 	"time"
 
 	types "github.com/kubeedge/kubeedge/keadm/cmd/keadm/app/cmd/common"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha2"
 )
 
 //KubeCloudInstTool embedes Common struct
@@ -49,7 +49,7 @@ func (cu *KubeCloudInstTool) InstallTools() error {
 			return fmt.Errorf("not able to create %s folder path", KubeEdgeNewConfigDir)
 		}
 
-		cloudCoreConfig := v1alpha1.NewDefaultCloudCoreConfig()
+		cloudCoreConfig := v1alpha2.NewDefaultCloudCoreConfig()
 		if cu.KubeConfig != "" {
 			cloudCoreConfig.KubeAPIConfig.KubeConfig = cu.KubeConfig
 		}

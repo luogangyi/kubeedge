@@ -30,9 +30,9 @@ import (
 	"sigs.k8s.io/yaml"
 
 	"github.com/kubeedge/kubeedge/cloud/pkg/cloudhub/servers/httpserver"
-	cloudcore "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha1"
-	edgecore "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha1"
-	edgesite "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgesite/v1alpha1"
+	cloudcore "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha2"
+	edgecore "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha2"
+	edgesite "github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgesite/v1alpha2"
 	"github.com/kubeedge/kubeedge/tests/e2e/constants"
 )
 

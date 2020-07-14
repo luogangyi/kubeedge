@@ -12,7 +12,7 @@ import (
 	"github.com/kubeedge/kubeedge/edge/pkg/common/modules"
 	metamanagerconfig "github.com/kubeedge/kubeedge/edge/pkg/metamanager/config"
 	"github.com/kubeedge/kubeedge/edge/pkg/metamanager/dao"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/edgecore/v1alpha2"
 )
 
 //constant metamanager module name
@@ -29,7 +29,7 @@ func newMetaManager(enable bool) *metaManager {
 }
 
 // Register register metamanager
-func Register(metaManager *v1alpha1.MetaManager) {
+func Register(metaManager *v1alpha2.MetaManager) {
 	metamanagerconfig.InitConfigure(metaManager)
 	meta := newMetaManager(metaManager.Enable)
 	initDBTable(meta)

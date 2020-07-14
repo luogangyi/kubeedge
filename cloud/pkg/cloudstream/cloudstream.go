@@ -20,7 +20,7 @@ import (
 	"github.com/kubeedge/beehive/pkg/core"
 	"github.com/kubeedge/kubeedge/cloud/pkg/cloudhub"
 	"github.com/kubeedge/kubeedge/cloud/pkg/cloudstream/config"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha2"
 )
 
 const (
@@ -38,7 +38,7 @@ func newCloudStream(enable bool) *cloudStream {
 	}
 }
 
-func Register(controller *v1alpha1.CloudStream) {
+func Register(controller *v1alpha2.CloudStream) {
 	config.InitConfigure(controller)
 	core.Register(newCloudStream(controller.Enable))
 }

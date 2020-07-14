@@ -9,7 +9,7 @@ import (
 	"github.com/kubeedge/kubeedge/cloud/pkg/edgecontroller/config"
 	"github.com/kubeedge/kubeedge/cloud/pkg/edgecontroller/constants"
 	"github.com/kubeedge/kubeedge/cloud/pkg/edgecontroller/controller"
-	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha1"
+	"github.com/kubeedge/kubeedge/pkg/apis/componentconfig/cloudcore/v1alpha2"
 )
 
 // EdgeController use beehive context message layer
@@ -23,7 +23,7 @@ func newEdgeController(enable bool) *EdgeController {
 	}
 }
 
-func Register(ec *v1alpha1.EdgeController, kubeAPIConfig *v1alpha1.KubeAPIConfig, nodeName string, edgesite bool) {
+func Register(ec *v1alpha2.EdgeController, kubeAPIConfig *v1alpha2.KubeAPIConfig, nodeName string, edgesite bool) {
 	// TODO move module config into EdgeController struct @kadisi
 	config.InitConfigure(ec, kubeAPIConfig, nodeName, edgesite)
 	core.Register(newEdgeController(ec.Enable))
