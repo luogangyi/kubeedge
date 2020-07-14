@@ -251,7 +251,7 @@ func (sctl *SyncController) deleteObjectSyncs() {
 		}
 		if isGarbage {
 			klog.Infof("ObjectSync %s will be deleted since node %s has been deleted", sync.Name, nodeName)
-			err = sctl.crdClient.ReliablesyncsV1alpha1().ObjectSyncs(sync.Namespace).Delete(sync.Name, metav1.NewDeleteOptions(0))
+			err = sctl.crdClient.ReliablesyncsV1alpha2().ObjectSyncs(sync.Namespace).Delete(sync.Name, metav1.NewDeleteOptions(0))
 			if err != nil {
 				klog.Errorf("failed to delete objectSync %s for edgenode %s, err: %v", sync.Name, nodeName, err)
 			}
@@ -260,7 +260,7 @@ func (sctl *SyncController) deleteObjectSyncs() {
 }
 
 // checkObjectSync checks whether objectSync is outdated
-func (sctl *SyncController) checkObjectSync(sync *v1alpha1.ObjectSync) (bool, error) {
+func (sctl *SyncController) checkObjectSync(sync *v1alpha2.ObjectSync) (bool, error) {
 	nodeName := getNodeName(sync.Name)
 	_, err := sctl.nodeLister.Get(nodeName)
 	if errors.IsNotFound(err) {
