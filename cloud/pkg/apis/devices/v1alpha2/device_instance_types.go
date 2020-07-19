@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1alpha1
+package v1alpha2
 
 import (
 	"k8s.io/api/core/v1"
@@ -28,6 +28,14 @@ type DeviceSpec struct {
 	DeviceModelRef *v1.LocalObjectReference `json:"deviceModelRef,omitempty"`
 	// Required: The protocol configuration used to connect to the device.
 	Protocol ProtocolConfig `json:"protocol,omitempty"`
+	// List of property visitors which describe how to access the device properties.
+	// PropertyVisitors must unique by propertyVisitor.propertyName.
+	// +optional
+	PropertyVisitors []DevicePropertyVisitor `json:"propertyVisitors,omitempty"`
+	// Data section describe a list of time-series properties which should be processed
+	// on edge node.
+	// +optional
+	Data DeviceData `json:"data,omitempty"`
 	// NodeSelector indicates the binding preferences between devices and nodes.
 	// Refer to k8s.io/kubernetes/pkg/apis/core NodeSelector for more details
 	// +optional
@@ -45,6 +53,12 @@ type ProtocolConfig struct {
 	// Protocol configuration for bluetooth
 	// +optional
 	Bluetooth *ProtocolConfigBluetooth `json:"bluetooth,omitempty"`
+	// Configuration for protocol common part
+	// +optional
+	Common *ProtocolConfigCommon `json:"common,omitempty"`
+	// Configuration for customized protocol
+	// +optional
+	CustomizedProtocol *ProtocolConfigCustomized `json:"customizedProtocol,omitempty"`
 }
 
 type ProtocolConfigOpcUA struct {
@@ -75,22 +89,47 @@ type ProtocolConfigOpcUA struct {
 
 // Only one of its members may be specified.
 type ProtocolConfigModbus struct {
-	// +optional
-	RTU *ProtocolConfigModbusRTU `json:"rtu,omitempty"`
-	// +optional
-	TCP *ProtocolConfigModbusTCP `json:"tcp,omitempty"`
+	// Required. 0-255
+	SlaveID int64 `json:"slaveID,omitempty"`
 }
 
-type ProtocolConfigModbusTCP struct {
+// Only one of COM or TCP may be specified.
+type ProtocolConfigCommon struct {
+	// +optional
+	COM *ProtocolConfigCOM `json:"com,omitempty"`
+	// +optional
+	TCP *ProtocolConfigTCP `json:"tcp,omitempty"`
+	// Communication type, like tcp client, tcp server or COM
+	// +optional
+	CommType string `json:"commType,omitempty"`
+	// Reconnection timeout
+	// +optional
+	ReconnTimeout int64 `json:"reconnTimeout,omitempty"`
+	// Reconnecting retry times
+	// +optional
+	ReconnRetryTimes int64 `json:"reconnRetryTimes,omitempty"`
+	// Define timeout of mapper collect from device.
+	// +optional
+	CollectTimeout int64 `json:"collectTimeout,omitempty"`
+	// Define retry times of mapper will collect from device.
+	// +optional
+	CollectRetryTimes int64 `json:"collectRetryTimes,omitempty"`
+	// Define collect type, sync or async.
+	// +optional
+	CollectType string `json:"collectType,omitempty"`
+	// Customized values for provided protocol
+	// +optional
+	CustomizedValues *CustomizedValue `json:"customizedValues,omitempty"`
+}
+
+type ProtocolConfigTCP struct {
 	// Required.
 	IP string `json:"ip,omitempty"`
 	// Required.
 	Port int64 `json:"port,omitempty"`
-	// Required.
-	SlaveID string `json:"slaveID,omitempty"`
 }
 
-type ProtocolConfigModbusRTU struct {
+type ProtocolConfigCOM struct {
 	// Required.
 	SerialPort string `json:"serialPort,omitempty"`
 	// Required. BaudRate 115200|57600|38400|19200|9600|4800|2400|1800|1200|600|300|200|150|134|110|75|50
@@ -101,14 +140,21 @@ type ProtocolConfigModbusRTU struct {
 	Parity string `json:"parity,omitempty"`
 	// Required. Bit that stops 1|2
 	StopBits int64 `json:"stopBits,omitempty"`
-	// Required. 0-255
-	SlaveID int64 `json:"slaveID,omitempty"`
 }
 
 type ProtocolConfigBluetooth struct {
 	// Unique identifier assigned to the device.
 	// +optional
 	MACAddress string `json:"macAddress,omitempty"`
+}
+
+type ProtocolConfigCustomized struct {
+	// Unique protocol name
+	// Required.
+	ProtocolName string `json:"protocolName,omitempty"`
+	// Any config data
+	// +optional
+	ConfigData *CustomizedValue `json:"configData,omitempty"`
 }
 
 // DeviceStatus reports the device state and the desired/reported values of twin attributes.
@@ -143,6 +189,49 @@ type TwinProperty struct {
 	// Additional metadata like timestamp when the value was reported etc.
 	// +optional
 	Metadata map[string]string `json:"metadata,omitempty"`
+}
+
+// DeviceData reports the device's time-series data to edge MQTT broker.
+// These data should not be processed by edgecore. Instead, they can be process by
+// third-party data-processing apps like EMQX kuiper.
+type DeviceData struct {
+	// Required: A list of data properties, which are not required to be processed by edgecore
+	DataProperties []DataProperty `json:"dataProperties,omitempty"`
+	// Topic used by mapper, all data collected from dataProperties
+	// should be published to this topic,
+	// the default value is $ke/events/device/+/data/update
+	// +optional
+	DataTopic string `json:"dataTopic,omitempty"`
+}
+
+// DataProperty represents the device property for external use.
+type DataProperty struct {
+	// Required: The property name for which should be processed by external apps.
+	// This property should be present in the device model.
+	PropertyName string `json:"propertyName,omitempty"`
+	// Additional metadata like timestamp when the value was reported etc.
+	// +optional
+	Metadata map[string]string `json:"metadata,omitempty"`
+}
+
+// DevicePropertyVisitor describes the specifics of accessing a particular device
+// property. Visitors are intended to be consumed by device mappers which connect to devices
+// and collect data / perform actions on the device.
+type DevicePropertyVisitor struct {
+	// Required: The device property name to be accessed. This should refer to one of the
+	// device properties defined in the device model.
+	PropertyName string `json:"propertyName,omitempty"`
+	// Define how frequent mapper will report the value.
+	// +optional
+	ReportCycle int64 `json:"reportCycle,omitempty"`
+	// Define how frequent mapper will collect from device.
+	// +optional
+	CollectCycle int64 `json:"collectCycle,omitempty"`
+	// Customized values for visitor of provided protocols
+	// +optional
+	CustomizedValues *CustomizedValue `json:"customizedValues,omitempty"`
+	// Required: Protocol relevant config details about the how to access the device property.
+	VisitorConfig `json:",inline"`
 }
 
 // +genclient

@@ -14,9 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1alpha1
+package v1alpha2
 
 import (
+	"encoding/json"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -25,9 +26,6 @@ import (
 type DeviceModelSpec struct {
 	// Required: List of device properties.
 	Properties []DeviceProperty `json:"properties,omitempty"`
-	// Required: List of property visitors which describe how to access the device properties.
-	// PropertyVisitors must unique by propertyVisitor.propertyName.
-	PropertyVisitors []DevicePropertyVisitor `json:"propertyVisitors,omitempty"`
 }
 
 // DeviceProperty describes an individual device property / attribute like temperature / humidity etc.
@@ -80,17 +78,6 @@ const (
 	ReadOnly  PropertyAccessMode = "ReadOnly"
 )
 
-// DevicePropertyVisitor describes the specifics of accessing a particular device
-// property. Visitors are intended to be consumed by device mappers which connect to devices
-// and collect data / perform actions on the device.
-type DevicePropertyVisitor struct {
-	// Required: The device property name to be accessed. This should refer to one of the
-	// device properties defined in the device model.
-	PropertyName string `json:"propertyName,omitempty"`
-	// Required: Protocol relevant config details about the how to access the device property.
-	VisitorConfig `json:",inline"`
-}
-
 // At least one of its members must be specified.
 type VisitorConfig struct {
 	// Opcua represents a set of additional visitor config fields of opc-ua protocol.
@@ -102,6 +89,9 @@ type VisitorConfig struct {
 	// Bluetooth represents a set of additional visitor config fields of bluetooth protocol.
 	// +optional
 	Bluetooth *VisitorConfigBluetooth `json:"bluetooth,omitempty"`
+	// CustomizedProtocol represents a set of visitor config fields of bluetooth protocol.
+	// +optional
+	CustomizedProtocol *VisitorConfigCustomized `json:"customizedProtocol,omitempty"`
 }
 
 // Common visitor configurations for bluetooth protocol
@@ -196,6 +186,14 @@ const (
 	ModbusRegisterTypeHoldingRegister       ModbusRegisterType = "HoldingRegister"
 )
 
+// Common visitor configurations for customized protocol
+type VisitorConfigCustomized struct {
+	// Required: name of customized protocol
+	ProtocolName string `json:"protocolName,omitempty"`
+	// Required: The definition of customized protocol
+	Definition *CustomizedValue `json:"definition,omitempty"`
+}
+
 // +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
@@ -215,4 +213,20 @@ type DeviceModelList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []DeviceModel `json:"items"`
+}
+
+type CustomizedValue map[string]interface{}
+
+func (in *CustomizedValue) DeepCopyInto(out *CustomizedValue) {
+	bytes, _ := json.Marshal(*in)
+	json.Unmarshal(bytes, out)
+}
+
+func (in *CustomizedValue) DeepCopy() *CustomizedValue {
+	if in == nil {
+		return nil
+	}
+	out := new(CustomizedValue)
+	in.DeepCopyInto(out)
+	return out
 }
