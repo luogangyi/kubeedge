@@ -186,6 +186,7 @@ func DealDeviceTwin(context *dtcontext.DTContext, deviceID string, eventID strin
 
 	add, deletes, update := dealTwinResult.Add, dealTwinResult.Delete, dealTwinResult.Update
 	if dealType == RestDealType && dealTwinResult.Err != nil {
+		klog.Infof("LGY DEBUG: in DealDeviceTwin dealTwinResult.Err != nil")
 		SyncDeviceFromSqlite(context, deviceID)
 		err = dealTwinResult.Err
 		updateResult, _ := dttype.BuildDeviceTwinResult(dttype.BaseMessage{EventID: eventID, Timestamp: now}, dealTwinResult.Result, 0)
@@ -193,6 +194,7 @@ func DealDeviceTwin(context *dtcontext.DTContext, deviceID string, eventID strin
 		return err
 	}
 	if len(add) != 0 || len(deletes) != 0 || len(update) != 0 {
+		klog.Infof("LGY DEBUG: in DealDeviceTwin before dtcommon.RetryTimes")
 		for i := 1; i <= dtcommon.RetryTimes; i++ {
 			err = dtclient.DeviceTwinTrans(add, deletes, update)
 			if err == nil {
@@ -207,11 +209,13 @@ func DealDeviceTwin(context *dtcontext.DTContext, deviceID string, eventID strin
 	}
 
 	if err != nil && dealType == RestDealType {
+		klog.Infof("LGY DEBUG: in DealDeviceTwin err != nil && dealType == RestDealType")
 		updateResult, _ := dttype.BuildDeviceTwinResult(dttype.BaseMessage{EventID: eventID, Timestamp: now}, dealTwinResult.Result, dealType)
 		dealUpdateResult(context, deviceID, eventID, dtcommon.InternalErrorCode, err, updateResult)
 		return err
 	}
 	if dealType == RestDealType {
+		klog.Infof("LGY DEBUG: in DealDeviceTwin dealType == RestDealType")
 		updateResult, _ := dttype.BuildDeviceTwinResult(dttype.BaseMessage{EventID: eventID, Timestamp: now}, dealTwinResult.Result, dealType)
 		dealUpdateResult(context, deviceID, eventID, dtcommon.InternalErrorCode, nil, updateResult)
 	}
@@ -221,10 +225,12 @@ func DealDeviceTwin(context *dtcontext.DTContext, deviceID string, eventID strin
 
 	delta, ok := dttype.BuildDeviceTwinDelta(dttype.BuildBaseMessage(), device.Twin)
 	if ok {
+		klog.Infof("LGY DEBUG: in DealDeviceTwin dealDelta")
 		dealDelta(context, deviceID, delta)
 	}
 
 	if len(dealTwinResult.SyncResult) > 0 {
+		klog.Infof("LGY DEBUG: in DealDeviceTwin dealSyncResult")
 		dealSyncResult(context, deviceID, dttype.BuildBaseMessage(), dealTwinResult.SyncResult)
 	}
 	return nil
@@ -752,6 +758,7 @@ func dealTwinAdd(returnResult *dttype.DealTwinResult, deviceID string, key strin
 	if msgTwin == nil {
 		return errors.New("The request body is wrong")
 	}
+	klog.Infof("LGY DEBUG: in dealTwinAdd,key: %v", key)
 	deviceTwin := dttype.MsgTwinToDeviceTwin(key, msgTwin)
 	deviceTwin.DeviceID = deviceID
 	syncResult := returnResult.SyncResult
@@ -759,6 +766,7 @@ func dealTwinAdd(returnResult *dttype.DealTwinResult, deviceID string, key strin
 	isChange := false
 	//add deleted twin when syncing from cloud: add version
 	if dealType != RestDealType && strings.Compare(msgTwin.Metadata.Type, "deleted") == 0 {
+		klog.Infof("LGY DEBUG: in dealTwinAdd, dealType != RestDealType && strings.Compare(msgTwin.Metadata.Type, "deleted") == 0")
 		if msgTwin.ExpectedVersion != nil {
 			versionJSON, _ := json.Marshal(msgTwin.ExpectedVersion)
 			deviceTwin.ExpectedVersion = string(versionJSON)
@@ -770,13 +778,16 @@ func dealTwinAdd(returnResult *dttype.DealTwinResult, deviceID string, key strin
 	}
 
 	if msgTwin.Expected != nil {
+		klog.Infof("LGY DEBUG: in dealTwinAdd, msgTwin.Expected != nil")
 		version := &dttype.TwinVersion{}
 		var msgTwinExpectedVersion *dttype.TwinVersion
 		if dealType != RestDealType {
 			msgTwinExpectedVersion = msgTwin.ExpectedVersion
 		}
+		klog.Infof("LGY DEBUG: in dealTwinAdd, before dealVersion")
 		ok, err := dealVersion(version, msgTwinExpectedVersion, dealType)
 		if !ok {
+			klog.Infof("LGY DEBUG: in dealTwinAdd, not match")
 			// not match
 			if dealType == RestDealType {
 				returnResult.Err = err
@@ -791,6 +802,7 @@ func dealTwinAdd(returnResult *dttype.DealTwinResult, deviceID string, key strin
 			valueType = msgTwin.Metadata.Type
 		}
 
+		klog.Infof("LGY DEBUG: in dealTwinAdd, before ValidateValue")
 		err = dtcommon.ValidateValue(valueType, *msgTwin.Expected.Value)
 		if err == nil {
 			meta := dttype.ValueMetadata{Timestamp: now}
@@ -801,6 +813,7 @@ func dealTwinAdd(returnResult *dttype.DealTwinResult, deviceID string, key strin
 			deviceTwin.Expected = *msgTwin.Expected.Value
 			isChange = true
 		} else {
+			klog.Infof("LGY DEBUG: in dealTwinAdd, after else")
 			delete(document, key)
 			delete(syncResult, key)
 			// reject add twin, if rest add return the err, while sync add return nil
@@ -813,6 +826,7 @@ func dealTwinAdd(returnResult *dttype.DealTwinResult, deviceID string, key strin
 	}
 
 	if msgTwin.Actual != nil {
+		klog.Infof("LGY DEBUG: in dealTwinAdd, after msgTwin.Actual != nil")
 		version := &dttype.TwinVersion{}
 		var msgTwinActualVersion *dttype.TwinVersion
 		if dealType != RestDealType {
@@ -875,6 +889,7 @@ func dealTwinAdd(returnResult *dttype.DealTwinResult, deviceID string, key strin
 	}
 
 	if isChange {
+		klog.Infof("LGY DEBUG: in dealTwinAdd, isChange,deviceTwin: %v ", deviceTwin)
 		twins[key] = dttype.DeviceTwinToMsgTwin([]dtclient.DeviceTwin{deviceTwin})[key]
 		add := returnResult.Add
 		add = append(add, deviceTwin)
@@ -891,6 +906,7 @@ func dealTwinAdd(returnResult *dttype.DealTwinResult, deviceID string, key strin
 		copySync := dttype.CopyMsgTwin(twins[key], false)
 		syncResult[key] = &copySync
 		if dealType == RestDealType {
+			klog.Infof("LGY DEBUG: in dealTwinAdd, CopyMsgTwin")
 			copyResult := dttype.CopyMsgTwin(syncResult[key], true)
 			returnResult.Result[key] = &copyResult
 			returnResult.SyncResult = syncResult
@@ -920,7 +936,7 @@ func DealMsgTwin(context *dtcontext.DTContext, deviceID string, msgTwins map[str
 		SyncResult: syncResult,
 		Document:   document,
 		Err:        nil}
-
+	klog.Infof("LGY DEBUG: in DealMsgTwin")
 	device, ok := context.GetDevice(deviceID)
 	if !ok {
 		klog.Errorf("invalid device id")
@@ -934,6 +950,7 @@ func DealMsgTwin(context *dtcontext.DTContext, deviceID string, msgTwins map[str
 	}
 
 	twins := device.Twin
+	klog.Infof("LGY DEBUG: device.Twin: %v", device.Twin)
 	if twins == nil {
 		device.Twin = make(map[string]*dttype.MsgTwin)
 		twins = device.Twin
@@ -941,22 +958,26 @@ func DealMsgTwin(context *dtcontext.DTContext, deviceID string, msgTwins map[str
 
 	var err error
 	for key, msgTwin := range msgTwins {
+		klog.Infof("LGY DEBUG: in key: %v, msgTwin: %v", key, msgTwin)
 		if twin, exist := twins[key]; exist {
 			if dealType >= 1 && msgTwin != nil && (msgTwin.Metadata == nil) {
 				klog.Infof("Not found metadata of twin")
 			}
 			if msgTwin == nil && dealType == 0 || dealType >= 1 && strings.Compare(msgTwin.Metadata.Type, "deleted") == 0 {
+				klog.Infof("LGY DEBUG: in DealMsgTwin dealTwinDelete")
 				err = dealTwinDelete(&returnResult, deviceID, key, twin, msgTwin, dealType)
 				if err != nil {
 					return returnResult
 				}
 				continue
 			}
+			klog.Infof("LGY DEBUG: in DealMsgTwin dealTwinCompare")
 			err = dealTwinCompare(&returnResult, deviceID, key, twin, msgTwin, dealType)
 			if err != nil {
 				return returnResult
 			}
 		} else {
+			klog.Infof("LGY DEBUG: in DealMsgTwin dealTwinAdd")
 			err = dealTwinAdd(&returnResult, deviceID, key, twins, msgTwin, dealType)
 			if err != nil {
 				return returnResult

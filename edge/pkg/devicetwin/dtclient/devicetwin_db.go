@@ -117,6 +117,7 @@ func DeviceTwinTrans(adds []DeviceTwin, deletes []DeviceDelete, updates []Device
 	}
 
 	for _, update := range updates {
+		klog.Infof("LGY DEBUG: in DeviceTwinTrans before UpdateDeviceTwinFields")
 		err = UpdateDeviceTwinFields(update.DeviceID, update.Name, update.Cols)
 		if err != nil {
 			obm.Rollback()
